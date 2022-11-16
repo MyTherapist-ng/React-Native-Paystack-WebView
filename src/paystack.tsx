@@ -77,6 +77,7 @@ const Paystack: React.ForwardRefRenderFunction<React.ReactNode, PayStackProps> =
                 ${getChannels(channels)}
                 ${refNumberString}
                 metadata: {
+                  tag: "wallet",
                 custom_fields: [
                         {
                         display_name:  '${firstName + ' ' + lastName}',
