@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 import { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react';
 import { Modal, View, ActivityIndicator, SafeAreaView } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
@@ -24,6 +24,7 @@ const Paystack: React.ForwardRefRenderFunction<React.ReactNode, PayStackProps> =
     autoStart = false,
     onSuccess,
     activityIndicatorColor = 'green',
+    metadata = {}, // New metadata prop
   },
   ref,
 ) => {
@@ -50,7 +51,10 @@ const Paystack: React.ForwardRefRenderFunction<React.ReactNode, PayStackProps> =
     }
   };
 
-  const refNumberString = refNumber ? `ref: '${refNumber}',` : ''; // should only send ref number if present, else if blank, paystack will auto-generate one
+  const refNumberString = refNumber ? `ref: '${refNumber}',` : '';
+
+  // Convert metadata object to a valid JSON string
+  const metadataString = JSON.stringify(metadata);
 
   const Paystackcontent = `   
       <!DOCTYPE html>
@@ -76,15 +80,7 @@ const Paystack: React.ForwardRefRenderFunction<React.ReactNode, PayStackProps> =
                 currency: '${currency}',
                 ${getChannels(channels)}
                 ${refNumberString}
-                metadata: {
-                  tag: "wallet",
-                custom_fields: [
-                        {
-                        display_name:  '${firstName + ' ' + lastName}',
-                        variable_name:  '${billingName}',
-                        value:''
-                        }
-                ]},
+                metadata: ${metadataString},
                 callback: function(response){
                       var resp = {event:'successful', transactionRef:response};
                         window.ReactNativeWebView.postMessage(JSON.stringify(resp))
@@ -168,7 +164,3 @@ const Paystack: React.ForwardRefRenderFunction<React.ReactNode, PayStackProps> =
 };
 
 export default forwardRef(Paystack);
-
-
-
-
